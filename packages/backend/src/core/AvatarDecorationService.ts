@@ -5,7 +5,7 @@
 
 import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
 import * as Redis from 'ioredis';
-import type { AvatarDecorationsRepository, MiAvatarDecoration, MiUser } from '@/models/_.js';
+import type { AvatarDecorationsRepository, InstancesRepository, UsersRepository, MiAvatarDecoration, MiUser } from '@/models/_.js';
 import { IdService } from '@/core/IdService.js';
 import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { DI } from '@/di-symbols.js';
@@ -13,6 +13,10 @@ import { bindThis } from '@/decorators.js';
 import { MemorySingleCache } from '@/misc/cache.js';
 import type { GlobalEvents } from '@/core/GlobalEventService.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
+import { HttpRequestService } from "@/core/HttpRequestService.js";
+import { appendQuery, query } from '@/misc/prelude/url.js';
+import type { Config } from '@/config.js';
+import {IsNull} from "typeorm";
 
 @Injectable()
 export class AvatarDecorationService implements OnApplicationShutdown {
@@ -20,15 +24,25 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 	public cacheWithRemote: MemorySingleCache<MiAvatarDecoration[]>;
 
 	constructor(
+		@Inject(DI.config)
+		private config: Config,
+
 		@Inject(DI.redisForSub)
 		private redisForSub: Redis.Redis,
 
 		@Inject(DI.avatarDecorationsRepository)
 		private avatarDecorationsRepository: AvatarDecorationsRepository,
 
+		@Inject(DI.instancesRepository)
+		private instancesRepository: InstancesRepository,
+
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
+
 		private idService: IdService,
 		private moderationLogService: ModerationLogService,
 		private globalEventService: GlobalEventService,
+		private httpRequestService: HttpRequestService,
 	) {
 		this.cache = new MemorySingleCache<MiAvatarDecoration[]>(1000 * 60 * 30); // 30s
 		this.cacheWithRemote = new MemorySingleCache<MiAvatarDecoration[]>(1000 * 60 * 30);
@@ -165,10 +179,8 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		};
 		if (existingDecoration == null) {
 			await this.create(decorationData);
-			this.cacheWithRemote.delete();
 		} else {
 			await this.update(existingDecoration.id, decorationData);
-			this.cacheWithRemote.delete();
 		}
 		const findDecoration = await this.avatarDecorationsRepository.findOneBy({
 			host: userHost,
@@ -199,7 +211,7 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 	}
 
 	@bindThis
-	public async getAll(noCache = false): Promise<MiAvatarDecoration[]> {
+	public async getAll(noCache = false, withRemote = false): Promise<MiAvatarDecoration[]> {
 		if (noCache) {
 			this.cache.delete();
 			this.cacheWithRemote.delete();
@@ -207,7 +219,7 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		if (!withRemote) {
 			return this.cache.fetch(() => this.avatarDecorationsRepository.find({ where: { host: IsNull() } }));
 		} else {
-			return this.cacheWithRemote.fetch(() => this.avatarDecorationsRepository.find());
+			return this.cache.fetch(() => this.avatarDecorationsRepository.find());
 		}
 	}
 
