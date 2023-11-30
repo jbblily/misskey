@@ -179,8 +179,10 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		};
 		if (existingDecoration == null) {
 			await this.create(decorationData);
+			this.cacheWithRemote.delete();
 		} else {
 			await this.update(existingDecoration.id, decorationData);
+			this.cacheWithRemote.delete();
 		}
 		const findDecoration = await this.avatarDecorationsRepository.findOneBy({
 			host: userHost,
@@ -219,7 +221,7 @@ export class AvatarDecorationService implements OnApplicationShutdown {
 		if (!withRemote) {
 			return this.cache.fetch(() => this.avatarDecorationsRepository.find({ where: { host: IsNull() } }));
 		} else {
-			return this.cache.fetch(() => this.avatarDecorationsRepository.find());
+			return this.cacheWithRemote.fetch(() => this.avatarDecorationsRepository.find());
 		}
 	}
 
