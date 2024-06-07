@@ -81,22 +81,13 @@ export class MiInstance {
 	public isNotResponding: boolean;
 
 	/**
-	 * このインスタンスと不通になった日時
-	 */
-	@Column('timestamp with time zone', {
-		nullable: true,
-	})
-	public notRespondingSince: Date | null;
-
-	/**
-	 * このインスタンスへの配信状態
+	 * このインスタンスへの配信を停止するか
 	 */
 	@Index()
-	@Column('enum', {
-		default: 'none',
-		enum: ['none', 'manuallySuspended', 'goneSuspended', 'autoSuspendedForNotResponding'],
+	@Column('boolean', {
+		default: false,
 	})
-	public suspensionState: 'none' | 'manuallySuspended' | 'goneSuspended' | 'autoSuspendedForNotResponding';
+	public isSuspended: boolean;
 
 	@Column('varchar', {
 		length: 64, nullable: true,

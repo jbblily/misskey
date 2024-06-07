@@ -83,7 +83,6 @@ import { definePageMetadata } from '@/scripts/page-metadata.js';
 import { deviceKind } from '@/scripts/device-kind.js';
 import MkNotes from '@/components/MkNotes.vue';
 import { url } from '@/config.js';
-import { favoritedChannelsCache } from '@/cache.js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import { defaultStore } from '@/store.js';
@@ -154,7 +153,6 @@ function favorite() {
 		channelId: channel.value.id,
 	}).then(() => {
 		favorited.value = true;
-		favoritedChannelsCache.delete();
 	});
 }
 
@@ -170,7 +168,6 @@ async function unfavorite() {
 		channelId: channel.value.id,
 	}).then(() => {
 		favorited.value = false;
-		favoritedChannelsCache.delete();
 	});
 }
 

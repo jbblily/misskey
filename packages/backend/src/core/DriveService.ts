@@ -220,7 +220,7 @@ export class DriveService {
 			file.size = size;
 			file.storedInternal = false;
 
-			return await this.driveFilesRepository.insertOne(file);
+			return await this.driveFilesRepository.insert(file).then(x => this.driveFilesRepository.findOneByOrFail(x.identifiers[0]));
 		} else { // use internal storage
 			const accessKey = randomUUID();
 			const thumbnailAccessKey = 'thumbnail-' + randomUUID();
@@ -254,7 +254,7 @@ export class DriveService {
 			file.md5 = hash;
 			file.size = size;
 
-			return await this.driveFilesRepository.insertOne(file);
+			return await this.driveFilesRepository.insert(file).then(x => this.driveFilesRepository.findOneByOrFail(x.identifiers[0]));
 		}
 	}
 
@@ -497,20 +497,14 @@ export class DriveService {
 
 		if (user && !force) {
 		// Check if there is a file with the same hash
-			const matched = await this.driveFilesRepository.findOneBy({
+			const much = await this.driveFilesRepository.findOneBy({
 				md5: info.md5,
 				userId: user.id,
 			});
 
-			if (matched) {
-				this.registerLogger.info(`file with same hash is found: ${matched.id}`);
-				if (sensitive && !matched.isSensitive) {
-					// The file is federated as sensitive for this time, but was federated as non-sensitive before.
-					// Therefore, update the file to sensitive.
-					await this.driveFilesRepository.update({ id: matched.id }, { isSensitive: true });
-					matched.isSensitive = true;
-				}
-				return matched;
+			if (much) {
+				this.registerLogger.info(`file with same hash is found: ${much.id}`);
+				return much;
 			}
 		}
 
@@ -615,7 +609,7 @@ export class DriveService {
 				file.type = info.type.mime;
 				file.storedInternal = false;
 
-				file = await this.driveFilesRepository.insertOne(file);
+				file = await this.driveFilesRepository.insert(file).then(x => this.driveFilesRepository.findOneByOrFail(x.identifiers[0]));
 			} catch (err) {
 			// duplicate key error (when already registered)
 				if (isDuplicateKeyValueError(err)) {

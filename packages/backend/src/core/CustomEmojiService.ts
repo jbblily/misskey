@@ -20,7 +20,7 @@ import { query } from '@/misc/prelude/url.js';
 import type { Serialized } from '@/types.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
 
-const parseEmojiStrRegexp = /^([-\w]+)(?:@([\w.-]+))?$/;
+const parseEmojiStrRegexp = /^(\w+)(?:@([\w.-]+))?$/;
 
 @Injectable()
 export class CustomEmojiService implements OnApplicationShutdown {
@@ -68,7 +68,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 		localOnly: boolean;
 		roleIdsThatCanBeUsedThisEmojiAsReaction: MiRole['id'][];
 	}, moderator?: MiUser): Promise<MiEmoji> {
-		const emoji = await this.emojisRepository.insertOne({
+		const emoji = await this.emojisRepository.insert({
 			id: this.idService.gen(),
 			updatedAt: new Date(),
 			name: data.name,
@@ -82,7 +82,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			isSensitive: data.isSensitive,
 			localOnly: data.localOnly,
 			roleIdsThatCanBeUsedThisEmojiAsReaction: data.roleIdsThatCanBeUsedThisEmojiAsReaction,
-		});
+		}).then(x => this.emojisRepository.findOneByOrFail(x.identifiers[0]));
 
 		if (data.host == null) {
 			this.localEmojisCache.refresh();
@@ -346,11 +346,10 @@ export class CustomEmojiService implements OnApplicationShutdown {
 	@bindThis
 	public async populateEmojis(emojiNames: string[], noteUserHost: string | null): Promise<Record<string, string>> {
 		const emojis = await Promise.all(emojiNames.map(x => this.populateEmoji(x, noteUserHost)));
-		const res = {} as Record<string, string>;
+		const res = {} as any;
 		for (let i = 0; i < emojiNames.length; i++) {
-			const resolvedEmoji = emojis[i];
-			if (resolvedEmoji != null) {
-				res[emojiNames[i]] = resolvedEmoji;
+			if (emojis[i] != null) {
+				res[emojiNames[i]] = emojis[i];
 			}
 		}
 		return res;

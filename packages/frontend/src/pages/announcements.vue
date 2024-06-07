@@ -21,19 +21,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 								<i v-else-if="announcement.icon === 'error'" class="ti ti-circle-x" style="color: var(--error);"></i>
 								<i v-else-if="announcement.icon === 'success'" class="ti ti-check" style="color: var(--success);"></i>
 							</span>
-							<MkA :to="`/announcements/${announcement.id}`"><span>{{ announcement.title }}</span></MkA>
+							<span>{{ announcement.title }}</span>
 						</div>
 						<div :class="$style.content">
 							<Mfm :text="announcement.text"/>
 							<img v-if="announcement.imageUrl" :src="announcement.imageUrl"/>
-							<MkA :to="`/announcements/${announcement.id}`">
-								<div style="margin-top: 8px; opacity: 0.7; font-size: 85%;">
-									{{ i18n.ts.createdAt }}: <MkTime :time="announcement.createdAt" mode="detail"/>
-								</div>
-								<div v-if="announcement.updatedAt" style="opacity: 0.7; font-size: 85%;">
-									{{ i18n.ts.updatedAt }}: <MkTime :time="announcement.updatedAt" mode="detail"/>
-								</div>
-							</MkA>
+							<div style="opacity: 0.7; font-size: 85%;">
+								<MkTime :time="announcement.updatedAt ?? announcement.createdAt" mode="detail"/>
+							</div>
 						</div>
 						<div v-if="tab !== 'past' && $i && !announcement.silence && !announcement.isRead" :class="$style.footer">
 							<MkButton primary @click="read(announcement)"><i class="ti ti-check"></i> {{ i18n.ts.gotIt }}</MkButton>
@@ -78,24 +73,24 @@ const paginationEl = ref<InstanceType<typeof MkPagination>>();
 
 const tab = ref('current');
 
-async function read(target) {
-	if (target.needConfirmationToRead) {
+async function read(announcement) {
+	if (announcement.needConfirmationToRead) {
 		const confirm = await os.confirm({
 			type: 'question',
 			title: i18n.ts._announcement.readConfirmTitle,
-			text: i18n.tsx._announcement.readConfirmText({ title: target.title }),
+			text: i18n.tsx._announcement.readConfirmText({ title: announcement.title }),
 		});
 		if (confirm.canceled) return;
 	}
 
 	if (!paginationEl.value) return;
-	paginationEl.value.updateItem(target.id, a => {
+	paginationEl.value.updateItem(announcement.id, a => {
 		a.isRead = true;
 		return a;
 	});
-	misskeyApi('i/read-announcement', { announcementId: target.id });
+	misskeyApi('i/read-announcement', { announcementId: announcement.id });
 	updateAccount({
-		unreadAnnouncements: $i!.unreadAnnouncements.filter(a => a.id !== target.id),
+		unreadAnnouncements: $i!.unreadAnnouncements.filter(a => a.id !== announcement.id),
 	});
 }
 

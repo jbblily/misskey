@@ -4,6 +4,7 @@
  */
 
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import promiseLimit from 'promise-limit';
 import { In } from 'typeorm';
 import { DI } from '@/di-symbols.js';
 import type { PollsRepository, EmojisRepository } from '@/models/_.js';
@@ -81,20 +82,20 @@ export class ApNoteService {
 		const expectHost = this.utilityService.extractDbHost(uri);
 
 		if (!validPost.includes(getApType(object))) {
-			return new IdentifiableError('d450b8a9-48e4-4dab-ae36-f4db763fda7c', `invalid Note: invalid object type ${getApType(object)}`);
+			return new Error(`invalid Note: invalid object type ${getApType(object)}`);
 		}
 
 		if (object.id && this.utilityService.extractDbHost(object.id) !== expectHost) {
-			return new IdentifiableError('d450b8a9-48e4-4dab-ae36-f4db763fda7c', `invalid Note: id has different host. expected: ${expectHost}, actual: ${this.utilityService.extractDbHost(object.id)}`);
+			return new Error(`invalid Note: id has different host. expected: ${expectHost}, actual: ${this.utilityService.extractDbHost(object.id)}`);
 		}
 
 		const actualHost = object.attributedTo && this.utilityService.extractDbHost(getOneApId(object.attributedTo));
 		if (object.attributedTo && actualHost !== expectHost) {
-			return new IdentifiableError('d450b8a9-48e4-4dab-ae36-f4db763fda7c', `invalid Note: attributedTo has different host. expected: ${expectHost}, actual: ${actualHost}`);
+			return new Error(`invalid Note: attributedTo has different host. expected: ${expectHost}, actual: ${actualHost}`);
 		}
 
 		if (object.published && !this.idService.isSafeT(new Date(object.published).valueOf())) {
-			return new IdentifiableError('d450b8a9-48e4-4dab-ae36-f4db763fda7c', 'invalid Note: published timestamp is malformed');
+			return new Error('invalid Note: published timestamp is malformed');
 		}
 
 		return null;
@@ -128,7 +129,7 @@ export class ApNoteService {
 				value,
 				object,
 			});
-			throw err;
+			throw new Error('invalid note');
 		}
 
 		const note = object as IPost;
@@ -208,13 +209,15 @@ export class ApNoteService {
 		}
 
 		// 添付ファイル
-		const files: MiDriveFile[] = [];
-
-		for (const attach of toArray(note.attachment)) {
-			attach.sensitive ??= note.sensitive;
-			const file = await this.apImageService.resolveImage(actor, attach);
-			if (file) files.push(file);
-		}
+		// TODO: attachmentは必ずしもImageではない
+		// TODO: attachmentは必ずしも配列ではない
+		const limit = promiseLimit<MiDriveFile>(2);
+		const files = (await Promise.all(toArray(note.attachment).map(attach => (
+			limit(() => this.apImageService.resolveImage(actor, {
+				...attach,
+				sensitive: note.sensitive, // Noteがsensitiveなら添付もsensitiveにする
+			}))
+		))));
 
 		// リプライ
 		const reply: MiNote | null = note.inReplyTo
@@ -407,7 +410,7 @@ export class ApNoteService {
 
 			this.logger.info(`register emoji host=${host}, name=${name}`);
 
-			return await this.emojisRepository.insertOne({
+			return await this.emojisRepository.insert({
 				id: this.idService.gen(),
 				host,
 				name,
@@ -416,7 +419,7 @@ export class ApNoteService {
 				publicUrl: tag.icon.url,
 				updatedAt: new Date(),
 				aliases: [],
-			});
+			}).then(x => this.emojisRepository.findOneByOrFail(x.identifiers[0]));
 		}));
 	}
 }

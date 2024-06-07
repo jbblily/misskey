@@ -7,6 +7,7 @@ import { markRaw, ref } from 'vue';
 import * as Misskey from 'misskey-js';
 import { miLocalStorage } from './local-storage.js';
 import type { SoundType } from '@/scripts/sound.js';
+import type { BuiltinTheme as ShikiBuiltinTheme } from 'shiki';
 import { Storage } from '@/pizzax.js';
 import { hemisphere } from '@/scripts/intl-const.js';
 
@@ -94,7 +95,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	defaultNoteVisibility: {
 		where: 'account',
-		default: 'public' as (typeof Misskey.noteVisibilities)[number],
+		default: 'public',
 	},
 	defaultNoteLocalOnly: {
 		where: 'account',
@@ -150,7 +151,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	visibility: {
 		where: 'deviceAccount',
-		default: 'public' as (typeof Misskey.noteVisibilities)[number],
+		default: 'public' as 'public' | 'home' | 'followers' | 'specified',
 	},
 	localOnly: {
 		where: 'deviceAccount',
@@ -225,10 +226,6 @@ export const defaultStore = markRaw(new Storage('base', {
 	advancedMfm: {
 		where: 'device',
 		default: true,
-	},
-	showReactionsCount: {
-		where: 'device',
-		default: false,
 	},
 	enableQuickAddMfmFunction: {
 		where: 'device',
@@ -434,23 +431,11 @@ export const defaultStore = markRaw(new Storage('base', {
 			sfxVolume: 1,
 		},
 	},
-	hemisphere: {
+  hemisphere: {
 		where: 'device',
 		default: hemisphere as 'N' | 'S',
-	},
+  },
 	enableHorizontalSwipe: {
-		where: 'device',
-		default: true,
-	},
-	useNativeUIForVideoAudioPlayer: {
-		where: 'device',
-		default: false,
-	},
-	keepOriginalFilename: {
-		where: 'device',
-		default: true,
-	},
-	alwaysConfirmFollow: {
 		where: 'device',
 		default: true,
 	},

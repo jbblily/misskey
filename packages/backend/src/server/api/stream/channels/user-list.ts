@@ -5,11 +5,12 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import type { MiUserListMembership, UserListMembershipsRepository, UserListsRepository } from '@/models/_.js';
+import { isUserRelated } from '@/misc/is-user-related.js';
 import type { Packed } from '@/misc/json-schema.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
 import { DI } from '@/di-symbols.js';
 import { bindThis } from '@/decorators.js';
-import { isRenotePacked, isQuotePacked } from '@/misc/is-renote.js';
+import { isInstanceMuted } from '@/misc/is-instance-muted.js';
 import Channel, { type MiChannelService } from '../channel.js';
 
 class UserListChannel extends Channel {
@@ -105,16 +106,24 @@ class UserListChannel extends Channel {
 			}
 		}
 
-		if (isRenotePacked(note) && !isQuotePacked(note) && !this.withRenotes) return;
+		if (note.renote && note.text == null && (note.fileIds == null || note.fileIds.length === 0) && !this.withRenotes) return;
 
-		if (this.isNoteMutedOrBlocked(note)) return;
+		// 流れてきたNoteがミュートしているユーザーが関わるものだったら無視する
+		if (isUserRelated(note, this.userIdsWhoMeMuting)) return;
+		// 流れてきたNoteがブロックされているユーザーが関わるものだったら無視する
+		if (isUserRelated(note, this.userIdsWhoBlockingMe)) return;
 
-		if (this.user && isRenotePacked(note) && !isQuotePacked(note)) {
+		if (note.renote && !note.text && isUserRelated(note, this.userIdsWhoMeMutingRenotes)) return;
+
+		if (this.user && note.renoteId && !note.text) {
 			if (note.renote && Object.keys(note.renote.reactions).length > 0) {
 				const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user.id);
 				note.renote.myReaction = myRenoteReaction;
 			}
 		}
+
+		// 流れてきたNoteがミュートしているインスタンスに関わるものだったら無視する
+		if (isInstanceMuted(note, this.userMutedInstances)) return;
 
 		this.connection.cacheNote(note);
 
