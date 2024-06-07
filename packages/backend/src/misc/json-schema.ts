@@ -45,6 +45,7 @@ import {
 	packedRoleCondFormulaValueNot,
 	packedRoleCondFormulaValueIsLocalOrRemoteSchema,
 	packedRoleCondFormulaValueAssignedRoleSchema,
+	packedRoleCondFormulaValueAssignedRoleSchema,
 	packedRoleCondFormulaValueCreatedSchema,
 	packedRoleCondFormulaFollowersOrFollowingOrNotesSchema,
 	packedRoleCondFormulaValueSchema,
@@ -52,6 +53,11 @@ import {
 } from '@/models/json-schema/role.js';
 import { packedAdSchema } from '@/models/json-schema/ad.js';
 import { packedReversiGameLiteSchema, packedReversiGameDetailedSchema } from '@/models/json-schema/reversi-game.js';
+import {
+	packedMetaLiteSchema,
+	packedMetaDetailedOnlySchema,
+	packedMetaDetailedSchema,
+} from '@/models/json-schema/meta.js';
 import {
 	packedMetaLiteSchema,
 	packedMetaDetailedOnlySchema,
@@ -108,6 +114,9 @@ export const refs = {
 	RolePolicies: packedRolePoliciesSchema,
 	ReversiGameLite: packedReversiGameLiteSchema,
 	ReversiGameDetailed: packedReversiGameDetailedSchema,
+	MetaLite: packedMetaLiteSchema,
+	MetaDetailedOnly: packedMetaDetailedOnlySchema,
+	MetaDetailed: packedMetaDetailedSchema,
 	MetaLite: packedMetaLiteSchema,
 	MetaDetailedOnly: packedMetaDetailedOnlySchema,
 	MetaDetailed: packedMetaDetailedSchema,

@@ -30,7 +30,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<MkInput v-else-if="v.type === 'string' && !v.multiline" v-model="values[k]" type="text" :mfmAutocomplete="v.treatAsMfm">
 					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
 					<template v-if="v.description" #caption>{{ v.description }}</template>
+				<MkInput v-else-if="v.type === 'string' && !v.multiline" v-model="values[k]" type="text" :mfmAutocomplete="v.treatAsMfm">
+					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
+					<template v-if="v.description" #caption>{{ v.description }}</template>
 				</MkInput>
+				<MkTextarea v-else-if="v.type === 'string' && v.multiline" v-model="values[k]" :mfmAutocomplete="v.treatAsMfm" :mfmPreview="v.treatAsMfm">
+					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
+					<template v-if="v.description" #caption>{{ v.description }}</template>
 				<MkTextarea v-else-if="v.type === 'string' && v.multiline" v-model="values[k]" :mfmAutocomplete="v.treatAsMfm" :mfmPreview="v.treatAsMfm">
 					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
 					<template v-if="v.description" #caption>{{ v.description }}</template>
@@ -38,7 +44,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<MkSwitch v-else-if="v.type === 'boolean'" v-model="values[k]">
 					<span v-text="v.label || k"></span>
 					<template v-if="v.description" #caption>{{ v.description }}</template>
+				<MkSwitch v-else-if="v.type === 'boolean'" v-model="values[k]">
+					<span v-text="v.label || k"></span>
+					<template v-if="v.description" #caption>{{ v.description }}</template>
 				</MkSwitch>
+				<MkSelect v-else-if="v.type === 'enum'" v-model="values[k]">
+					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
+					<option v-for="option in v.enum" :key="option.value" :value="option.value">{{ option.label }}</option>
 				<MkSelect v-else-if="v.type === 'enum'" v-model="values[k]">
 					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
 					<option v-for="option in v.enum" :key="option.value" :value="option.value">{{ option.label }}</option>
@@ -46,11 +58,19 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<MkRadios v-else-if="v.type === 'radio'" v-model="values[k]">
 					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
 					<option v-for="option in v.options" :key="option.value" :value="option.value">{{ option.label }}</option>
+				<MkRadios v-else-if="v.type === 'radio'" v-model="values[k]">
+					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
+					<option v-for="option in v.options" :key="option.value" :value="option.value">{{ option.label }}</option>
 				</MkRadios>
 				<MkRange v-else-if="v.type === 'range'" v-model="values[k]" :min="v.min" :max="v.max" :step="v.step" :textConverter="v.textConverter">
 					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
 					<template v-if="v.description" #caption>{{ v.description }}</template>
+				<MkRange v-else-if="v.type === 'range'" v-model="values[k]" :min="v.min" :max="v.max" :step="v.step" :textConverter="v.textConverter">
+					<template #label><span v-text="v.label || k"></span><span v-if="v.required === false"> ({{ i18n.ts.optional }})</span></template>
+					<template v-if="v.description" #caption>{{ v.description }}</template>
 				</MkRange>
+				<MkButton v-else-if="v.type === 'button'" @click="v.action($event, values)">
+					<span v-text="v.content || k"></span>
 				<MkButton v-else-if="v.type === 'button'" @click="v.action($event, values)">
 					<span v-text="v.content || k"></span>
 				</MkButton>
@@ -88,10 +108,14 @@ import { infoImageUrl } from '@/instance.js';
 const props = defineProps<{
 	title: string;
 	form: Form;
+	form: Form;
 }>();
 
 const emit = defineEmits<{
 	(ev: 'done', v: {
+		canceled: true;
+	} | {
+		result: Record<string, any>;
 		canceled: true;
 	} | {
 		result: Record<string, any>;

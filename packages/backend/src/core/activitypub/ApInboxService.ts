@@ -295,11 +295,14 @@ export class ApInboxService {
 		const meta = await this.metaService.fetch();
 		if (this.utilityService.isBlockedHost(meta.blockedHosts, this.utilityService.extractDbHost(uri))) return;
 
+		const relays = await this.relayService.getAcceptedRelays();
+		const fromRelay = !!actor.inbox && relays.map(r => r.inbox).includes(actor.inbox);
+
 		const unlock = await this.appLockService.getApLock(uri);
 
 		try {
 			// 既に同じURIを持つものが登録されていないかチェック
-			const exist = await this.apNoteService.fetchNote(uri);
+			const exist = await this.apNoteService.fetchNote(fromRelay ? targetUri : uri);
 			if (exist) {
 				return;
 			}
@@ -539,6 +542,7 @@ export class ApInboxService {
 		const userIds = uris
 			.filter(uri => uri.startsWith(this.config.url + '/users/'))
 			.map(uri => uri.split('/').at(-1))
+			.filter(isNotNull);
 			.filter(isNotNull);
 		const users = await this.usersRepository.findBy({
 			id: In(userIds),

@@ -25,7 +25,9 @@ export const paramDef = {
 		host: { type: 'string' },
 		isSuspended: { type: 'boolean' },
 		moderationNote: { type: 'string' },
+		moderationNote: { type: 'string' },
 	},
+	required: ['host'],
 	required: ['host'],
 } as const;
 
@@ -70,6 +72,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 						host: instance.host,
 					});
 				}
+			}
+
+			if (ps.moderationNote != null && instance.moderationNote !== ps.moderationNote) {
+				this.moderationLogService.log(me, 'updateRemoteInstanceNote', {
+					id: instance.id,
+					host: instance.host,
+					before: instance.moderationNote,
+					after: ps.moderationNote,
+				});
 			}
 
 			if (ps.moderationNote != null && instance.moderationNote !== ps.moderationNote) {

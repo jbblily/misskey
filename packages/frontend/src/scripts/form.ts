@@ -21,6 +21,7 @@ export type FormItem = {
 	hidden?: Hidden;
 	multiline?: boolean;
 	treatAsMfm?: boolean;
+	treatAsMfm?: boolean;
 } | {
 	label?: string;
 	type: 'number';
@@ -56,6 +57,9 @@ export type FormItem = {
 	label?: string;
 	type: 'range';
 	default: number | null;
+	description?: string;
+	required?: boolean;
+	step?: number;
 	description?: string;
 	required?: boolean;
 	step?: number;

@@ -129,6 +129,7 @@ export class FileInfoService {
 			'image/svg+xml',
 		].includes(type.mime)) {
 			blurhash = await this.getBlurhash(path, type.mime).catch(e => {
+			blurhash = await this.getBlurhash(path, type.mime).catch(e => {
 				warnings.push(`getBlurhash failed: ${e}`);
 				return undefined;
 			});
@@ -455,6 +456,9 @@ export class FileInfoService {
 	 * Calculate average color of image
 	 */
 	@bindThis
+	private getBlurhash(path: string, type: string): Promise<string> {
+		return new Promise(async (resolve, reject) => {
+			(await sharpBmp(path, type))
 	private getBlurhash(path: string, type: string): Promise<string> {
 		return new Promise(async (resolve, reject) => {
 			(await sharpBmp(path, type))

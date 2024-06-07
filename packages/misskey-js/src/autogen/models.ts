@@ -51,3 +51,6 @@ export type ReversiGameDetailed = components['schemas']['ReversiGameDetailed'];
 export type MetaLite = components['schemas']['MetaLite'];
 export type MetaDetailedOnly = components['schemas']['MetaDetailedOnly'];
 export type MetaDetailed = components['schemas']['MetaDetailed'];
+export type MetaLite = components['schemas']['MetaLite'];
+export type MetaDetailedOnly = components['schemas']['MetaDetailedOnly'];
+export type MetaDetailed = components['schemas']['MetaDetailed'];

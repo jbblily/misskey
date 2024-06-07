@@ -537,6 +537,7 @@ export type Channels = {
             unreadMention: (payload: Note['id']) => void;
             readAllUnreadMentions: () => void;
             notificationFlushed: () => void;
+            notificationFlushed: () => void;
             unreadSpecifiedNote: (payload: Note['id']) => void;
             readAllUnreadSpecifiedNotes: () => void;
             readAllAntennas: () => void;
@@ -1165,6 +1166,7 @@ declare namespace entities {
         AdminEmojiAddAliasesBulkRequest,
         AdminEmojiAddRequest,
         AdminEmojiAddResponse,
+        AdminEmojiAddResponse,
         AdminEmojiCopyRequest,
         AdminEmojiCopyResponse,
         AdminEmojiDeleteBulkRequest,
@@ -1734,6 +1736,10 @@ declare namespace entities {
         MetaLite,
         MetaDetailedOnly,
         MetaDetailed
+        ReversiGameDetailed,
+        MetaLite,
+        MetaDetailedOnly,
+        MetaDetailed
     }
 }
 export { entities }
@@ -2251,6 +2257,15 @@ type MetaDetailedOnly = components['schemas']['MetaDetailedOnly'];
 type MetaLite = components['schemas']['MetaLite'];
 
 // @public (undocumented)
+type MetaDetailed = components['schemas']['MetaDetailed'];
+
+// @public (undocumented)
+type MetaDetailedOnly = components['schemas']['MetaDetailedOnly'];
+
+// @public (undocumented)
+type MetaLite = components['schemas']['MetaLite'];
+
+// @public (undocumented)
 type MetaRequest = operations['meta']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
@@ -2347,6 +2362,9 @@ type ModerationLog = {
     type: 'updateRemoteInstanceNote';
     info: ModerationLogPayloads['updateRemoteInstanceNote'];
 } | {
+    type: 'updateRemoteInstanceNote';
+    info: ModerationLogPayloads['updateRemoteInstanceNote'];
+} | {
     type: 'markSensitiveDriveFile';
     info: ModerationLogPayloads['markSensitiveDriveFile'];
 } | {
@@ -2385,6 +2403,7 @@ type ModerationLog = {
 });
 
 // @public (undocumented)
+export const moderationLogTypes: readonly ["updateServerSettings", "suspend", "unsuspend", "updateUserNote", "addCustomEmoji", "updateCustomEmoji", "deleteCustomEmoji", "assignRole", "unassignRole", "createRole", "updateRole", "deleteRole", "clearQueue", "promoteQueue", "deleteDriveFile", "deleteNote", "createGlobalAnnouncement", "createUserAnnouncement", "updateGlobalAnnouncement", "updateUserAnnouncement", "deleteGlobalAnnouncement", "deleteUserAnnouncement", "resetPassword", "suspendRemoteInstance", "unsuspendRemoteInstance", "updateRemoteInstanceNote", "markSensitiveDriveFile", "unmarkSensitiveDriveFile", "resolveAbuseReport", "createInvitation", "createAd", "updateAd", "deleteAd", "createAvatarDecoration", "updateAvatarDecoration", "deleteAvatarDecoration", "unsetUserAvatar", "unsetUserBanner"];
 export const moderationLogTypes: readonly ["updateServerSettings", "suspend", "unsuspend", "updateUserNote", "addCustomEmoji", "updateCustomEmoji", "deleteCustomEmoji", "assignRole", "unassignRole", "createRole", "updateRole", "deleteRole", "clearQueue", "promoteQueue", "deleteDriveFile", "deleteNote", "createGlobalAnnouncement", "createUserAnnouncement", "updateGlobalAnnouncement", "updateUserAnnouncement", "deleteGlobalAnnouncement", "deleteUserAnnouncement", "resetPassword", "suspendRemoteInstance", "unsuspendRemoteInstance", "updateRemoteInstanceNote", "markSensitiveDriveFile", "unmarkSensitiveDriveFile", "resolveAbuseReport", "createInvitation", "createAd", "updateAd", "deleteAd", "createAvatarDecoration", "updateAvatarDecoration", "deleteAvatarDecoration", "unsetUserAvatar", "unsetUserBanner"];
 
 // @public (undocumented)
@@ -2741,6 +2760,9 @@ type RoleCondFormulaLogics = components['schemas']['RoleCondFormulaLogics'];
 
 // @public (undocumented)
 type RoleCondFormulaValue = components['schemas']['RoleCondFormulaValue'];
+
+// @public (undocumented)
+type RoleCondFormulaValueAssignedRole = components['schemas']['RoleCondFormulaValueAssignedRole'];
 
 // @public (undocumented)
 type RoleCondFormulaValueAssignedRole = components['schemas']['RoleCondFormulaValueAssignedRole'];
