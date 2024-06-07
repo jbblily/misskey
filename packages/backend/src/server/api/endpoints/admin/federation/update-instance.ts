@@ -25,7 +25,9 @@ export const paramDef = {
 		host: { type: 'string' },
 		isSuspended: { type: 'boolean' },
 		moderationNote: { type: 'string' },
+		moderationNote: { type: 'string' },
 	},
+	required: ['host'],
 	required: ['host'],
 } as const;
 
@@ -46,12 +48,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new Error('instance not found');
 			}
 
+			const isSuspendedBefore = instance.suspensionState !== 'none';
+			let suspensionState: undefined | 'manuallySuspended' | 'none';
+
+			if (ps.isSuspended != null && isSuspendedBefore !== ps.isSuspended) {
+				suspensionState = ps.isSuspended ? 'manuallySuspended' : 'none';
+			}
+
 			await this.federatedInstanceService.update(instance.id, {
-				isSuspended: ps.isSuspended,
+				suspensionState,
 				moderationNote: ps.moderationNote,
 			});
 
-			if (ps.isSuspended != null && instance.isSuspended !== ps.isSuspended) {
+			if (ps.isSuspended != null && isSuspendedBefore !== ps.isSuspended) {
 				if (ps.isSuspended) {
 					this.moderationLogService.log(me, 'suspendRemoteInstance', {
 						id: instance.id,
@@ -63,6 +72,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 						host: instance.host,
 					});
 				}
+			}
+
+			if (ps.moderationNote != null && instance.moderationNote !== ps.moderationNote) {
+				this.moderationLogService.log(me, 'updateRemoteInstanceNote', {
+					id: instance.id,
+					host: instance.host,
+					before: instance.moderationNote,
+					after: ps.moderationNote,
+				});
 			}
 
 			if (ps.moderationNote != null && instance.moderationNote !== ps.moderationNote) {
