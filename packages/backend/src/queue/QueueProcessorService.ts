@@ -227,6 +227,7 @@ export class QueueProcessorService implements OnApplicationShutdown {
 				.on('completed', (job, result) => logger.debug(`completed(${result}) id=${job.id}`))
 				.on('failed', (job, err) => {
 					logger.error(`failed(${err.stack}) id=${job ? job.id : '-'}`, { job, e: renderError(err) });
+
 					if (config.sentryForBackend) {
 						Sentry.captureMessage(`Queue: DB: ${job?.name ?? '?'}: ${err.message}`, {
 							level: 'error',
