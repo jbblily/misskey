@@ -5069,6 +5069,10 @@ export interface Locale extends ILocale {
      */
     "createdAntennas": string;
     /**
+     * 編集済み: {date} {time}
+     */
+    "noteUpdatedAt": ParameterizedString<"date" | "time">;
+    /**
      * これ以上このクリップにノートを追加できません。
      */
     "clipNoteLimitExceeded": string;
@@ -6646,6 +6650,10 @@ export interface Locale extends ILocale {
              * パブリック投稿の許可
              */
             "canPublicNote": string;
+            /**
+             * ノートの編集
+             */
+            "canEditNote": string;
             /**
              * ノート内の最大メンション数
              */
