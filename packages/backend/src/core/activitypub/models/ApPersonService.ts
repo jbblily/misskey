@@ -420,6 +420,8 @@ export class ApPersonService implements OnModuleInit {
 		// ハッシュタグ更新
 		this.hashtagService.updateUsertags(user, tags);
 
+		this.avatarDecorationService.remoteUserUpdate(user);
+
 		//#region アバターとヘッダー画像をフェッチ
 		try {
 			const updates = await this.resolveAvatarAndBanner(user, person.icon, person.image);
@@ -545,6 +547,8 @@ export class ApPersonService implements OnModuleInit {
 		if (moving) updates.movedAt = new Date();
 
 		// Update user
+		const user = await this.usersRepository.findOneByOrFail({ id: exist.id });
+		await this.avatarDecorationService.remoteUserUpdate(user);
 		await this.usersRepository.update(exist.id, updates);
 
 		if (person.publicKey) {
