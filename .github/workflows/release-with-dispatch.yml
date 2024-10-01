@@ -60,13 +60,13 @@ jobs:
 
         ### General
         -
-        
+
         ### Client
         -
-        
+
         ### Server
         -
-        
+
       use_external_app_to_release: ${{ vars.USE_RELEASE_APP == 'true' }}
       indent: ${{ vars.INDENT }}
     secrets:
