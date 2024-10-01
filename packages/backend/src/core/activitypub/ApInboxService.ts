@@ -297,10 +297,6 @@ export class ApInboxService {
 		const fromRelay = !!actor.inbox && relays.map(r => r.inbox).includes(actor.inbox);
 		const targetUri = getApId(activity.object);
 
-		const relays = await this.relayService.getAcceptedRelays();
-		const fromRelay = !!actor.inbox && relays.map(r => r.inbox).includes(actor.inbox);
-		const targetUri = getApId(activity.object);
-
 		const unlock = await this.appLockService.getApLock(uri);
 
 		try {
