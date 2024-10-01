@@ -115,6 +115,8 @@ export default class Connection {
 
 		const { type, body } = obj;
 
+		if (typeof body !== 'object' || body === null || Array.isArray(body)) return;
+
 		switch (type) {
 			case 'readNotification': this.onReadNotification(body); break;
 			case 'subNote': this.onSubscribeNote(body); break;

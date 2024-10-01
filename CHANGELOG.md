@@ -1,15 +1,55 @@
-## Unreleased
+## 2024.9.0
 
 ### General
--
+- Feat: ノート単体・ユーザーのノート・クリップのノートの埋め込み機能
+  - 埋め込みコードやウェブサイトへの実装方法の詳細は https://misskey-hub.net/docs/for-users/features/embed/ をご覧ください
+- Feat: パスキーでログインボタンを実装 (#14574)
+- Feat: フォローされた際のメッセージを設定できるように
+- Feat: 連合をホワイトリスト制にできるように
+- Feat: UserWebhookとSystemWebhookのテスト送信機能を追加 (#14445)
+- Feat: モデレーターはユーザーにかかわらずファイルが添付されているノートを検索できるように  
+  (Cherry-picked from https://github.com/MisskeyIO/misskey/pull/680)
+- Feat: データエクスポートが完了した際に通知を発行するように
+- Enhance: ユーザーによるコンテンツインポートの可否をロールポリシーで制御できるように
+- Enhance: 依存関係の更新
+- Enhance: l10nの更新
 
 ### Client
-- サイズ制限を超過するファイルをアップロードしようとした際にエラーを出すように
+- Enhance: サイズ制限を超過するファイルをアップロードしようとした際にエラーを出すように
+- Enhance: アイコンデコレーション管理画面にプレビューを追加
+- Enhance: コントロールパネル内のファイル一覧でセンシティブなファイルを区別しやすく
+- Enhance: ScratchpadにUIインスペクターを追加
+- Enhance: Play編集画面の項目の並びを少しリデザイン
+- Enhance: 各種メニューをドロワー表示するかどうか設定可能に
+- Enhance: AiScriptのMk:C:containerのオプションに`borderStyle`と`borderRadius`を追加
+- Enhance: CWでも絵文字をクリックしてメニューを表示できるように
 - Fix: サーバーメトリクスが2つ以上あるとリロード直後の表示がおかしくなる問題を修正
+- Fix: コントロールパネル内のAp requests内のチャートの表示がおかしかった問題を修正
+- Fix: 月の違う同じ日はセパレータが表示されないのを修正
+- Fix: タッチ画面でレンジスライダーを操作するとツールチップが複数表示される問題を修正  
+  (Cherry-picked from https://github.com/taiyme/misskey/pull/265)
+- Fix: 縦横比が極端なカスタム絵文字を表示する際にレイアウトが崩れる箇所があるのを修正  
+  (Cherry-picked from https://github.com/MisskeyIO/misskey/pull/725)
+- Fix: 設定変更時のリロード確認ダイアログが複数個表示されることがある問題を修正
+- Fix: ファイルの詳細ページのファイルの説明で改行が正しく表示されない問題を修正  
+  (Cherry-picked from https://activitypub.software/TransFem-org/Sharkey/-/commit/bde6bb0bd2e8b0d027e724d2acdb8ae0585a8110)
+- Fix: 一部画面のページネーションが動作しにくくなっていたのを修正 ( #12766 , #11449 )
 
 ### Server
-- ファイルがサイズの制限を超えてアップロードされた際にエラーを返さなかった問題を修正
-
+- Feat: Misskey® Reactions Boost Technology™ (RBT)により、リアクションの作成負荷を低減することが可能に
+- Fix: アンテナの書き込み時にキーワードが与えられなかった場合のエラーをApiErrorとして投げるように
+  - この変更により、公式フロントエンドでは入力の不備が内部エラーとして報告される代わりに一般的なエラーダイアログで報告されます
+- Fix: ファイルがサイズの制限を超えてアップロードされた際にエラーを返さなかった問題を修正
+- Fix: 外部ページを解析する際に、ページに紐づけられた関連リソースも読み込まれてしまう問題を修正  
+  (Cherry-picked from https://activitypub.software/TransFem-org/Sharkey/-/commit/26e0412fbb91447c37e8fb06ffb0487346063bb8)
+- Fix: Continue importing from file if single emoji import fails
+- Fix: `Retry-After`ヘッダーが送信されなかった問題を修正  
+  (Cherry-picked from https://activitypub.software/TransFem-org/Sharkey/-/commit/8a982c61c01909e7540ff1be9f019df07c3f0624)
+- Fix: サーバーサイドのDOM解析完了時にリソースを開放するように  
+  (Cherry-picked from https://activitypub.software/TransFem-org/Sharkey/-/merge_requests/634)
+- Fix: `<link rel="alternate">`を追って照会するのはOKレスポンスが返却された場合のみに  
+  (Cherry-picked from https://activitypub.software/TransFem-org/Sharkey/-/merge_requests/633)
+- Fix: メールにスタイルが適用されていなかった問題を修正
 
 ## 2024.8.0
 
@@ -278,6 +318,58 @@
 - Fix: `/tags` と `/user-tags` が検索エンジンにインデックスされないように
 - Fix: もともとセンシティブではないと連合されていたファイルがセンシティブとして連合された場合にセンシティブとしてそのファイルを扱うように
   - センシティブとして連合したファイルは非センシティブとして連合されてもセンシティブとして扱われます
+
+## 2024.3.1
+
+### General
+-
+
+### Client
+- Fix: 絵文字関係の不具合を修正 (#13485)
+  - 履歴に残っている or ピン留めされた絵文字がコントロールパネルより削除されていた際にリアクションデッキが表示できなくなる
+  - Unicode絵文字が履歴に残っている or ピン留めされているとリアクションデッキが表示できなくなる
+- Fix: カスタム絵文字の画像読み込みに失敗した際はテキストではなくダミー画像を表示 #13487
+
+### Server
+-
+
+## 2024.3.0
+
+### General
+- Enhance: 投稿者のロールに応じて、一つのノートに含むことのできるメンションとダイレクト投稿の宛先の人数に上限を設定できるように
+  * デフォルトのメンション上限は20アカウントに設定されます。（管理者はベースロールの設定で変更可能です。）
+  * 連合の問い合わせに応答しないサーバーのリモートユーザーへのメンションは、上限の人数に含めない実装になっています。
+- Enhance: 通知がミュート、凍結を考慮するようになりました
+- Enhance: サーバーごとにモデレーションノートを残せるように
+- Enhance: コンディショナルロールの条件に「マニュアルロールへのアサイン」を追加
+- Enhance: 通知の受信設定に「フォロー中またはフォロワー」を追加
+- Enhance: 通知の履歴をリセットできるように
+- Fix: ダイレクトなノートに対してはダイレクトでしか返信できないように
+
+### Client
+- Enhance: ノート作成画面のファイル添付メニューの区切り線の位置を調整
+- Fix: syuilo/misskeyの時代からあるインスタンスが改変されたバージョンであると誤認識される問題
+- Fix: MFMのオートコンプリートが出るべき状況で出ないことがある問題を修正
+- Fix: チャートのラベルが消えている問題を修正
+- Fix: 画面表示後最初の音声再生が爆音になることがある問題を修正
+- Fix: 設定のバックアップ作成時に名前を入力しなかった場合、ローカライゼーションがおかしくなる問題を修正
+- Fix: ページ`/admin/emojis`の絵文字編集ダイアログで「リアクションとして使えるロール」を追加する際に何も選択せずOKを押下すると画面が固まる問題を修正
+- Fix: 絵文字サジェストの順位で、絵文字自体の名前が同じものよりもタグで一致しているものが優先されてしまう問題を修正
+- Fix: ユーザの情報のポップアップが消えなくなることがある問題を修正
+
+### Server
+- Enhance: エンドポイント`flash/update`の`flashId`以外のパラメータは必須ではなくなりました
+- Fix: nodeinfoにenableMcaptchaとenableTurnstileが無いのを修正
+- Fix: 破損した通知をクライアントに送信しないように
+	* 通知欄が無限にリロードされる問題が改善する可能性があります
+- Fix: 禁止キーワードを含むノートがDelayed Queueに追加されて再処理される問題を修正
+- Fix: 自分がフォローしていないアカウントのフォロワー限定ノートが閲覧できることがある問題を修正
+- Fix: タイムラインのオプションで「リノートを表示」を無効にしている際、投票のみの引用リノートが流れてこない問題を修正
+- Fix: エンドポイント`admin/emoji/update`の各種修正
+  - 必須パラメータを`id`または`name`のいずれかのみに
+  - `id`の代わりに`name`で絵文字を指定可能に（`id`・`name`両指定時は従来通り`name`を変更する挙動）
+  - `category`および`licence`が指定なしの時勝手にnullに上書きされる挙動を修正
+- Fix: 通知の受信設定で「相互フォロー」が正しく動作しない問題を修正
 
 ## 2024.3.1
 
