@@ -6,6 +6,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+ @import url('https://cdn.jsdelivr.net/gh/sun-typeface/SUITE/fonts/static/woff2/SUITE.css');
+ @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap');
+
 :root {
 	--MI-radius: 12px;
 	--MI-marginFull: 16px;
@@ -27,13 +30,18 @@
 	background-color: var(--MI_THEME-accent);
 }
 
+@import url('https://cdn.jsdelivr.net/gh/sun-typeface/SUITE/fonts/static/woff2/SUITE.css');
+
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap');
+
+
 html {
 	background-color: var(--MI_THEME-bg);
 	color: var(--MI_THEME-fg);
 	accent-color: var(--MI_THEME-accent);
 	overflow: auto;
 	overflow-wrap: break-word;
-	font-family: 'Hiragino Maru Gothic Pro', "BIZ UDGothic", Roboto, HelveticaNeue, Arial, sans-serif;
+	font-family: 'SUITE', 'Zen Maru Gothic', 'Hiragino Maru Gothic Pro', "BIZ UDGothic", Roboto, HelveticaNeue, Arial, sans-serif;
 	font-size: 14px;
 	line-height: 1.35;
 	text-size-adjust: 100%;
