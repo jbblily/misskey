@@ -292,11 +292,7 @@ export class ApInboxService {
 
 		// アナウンス先が許可されているかチェック
 		if (!this.utilityService.isFederationAllowedUri(uri)) return;
-
-		const relays = await this.relayService.getAcceptedRelays();
-		const fromRelay = !!actor.inbox && relays.map(r => r.inbox).includes(actor.inbox);
-		const targetUri = getApId(activity.object);
-
+		
 		const relays = await this.relayService.getAcceptedRelays();
 		const fromRelay = !!actor.inbox && relays.map(r => r.inbox).includes(actor.inbox);
 		const targetUri = getApId(activity.object);
